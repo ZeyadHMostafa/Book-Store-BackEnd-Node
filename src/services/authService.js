@@ -8,7 +8,7 @@ const generateToken = async (id) => {
 };
 
 const authenticate = async (req, res, next) => {
-  const token = req.headers.bearer;
+  const token = req.headers.authorization;
 
   if (!token) {
     return res.status(401).json({error: 'No user token provided'});
@@ -28,7 +28,6 @@ const authorize = async (req, res, next) => {
   if (req.user.id === req.params.id) {
     return next();
   }
-  console.log(req.user.id, req.params.id);
 
   return res.status(401).json({error: 'Incorrect user token'});
 };
