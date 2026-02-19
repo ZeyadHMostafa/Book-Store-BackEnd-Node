@@ -1,41 +1,17 @@
-import mongoose from 'mongoose';
-
-const {Schema, model} = mongoose;
+const mongoose = require('mongoose');
 
 // TODO: This is just a sample. all the content here should bechanged before deploying the project!!
 
-const schema = new Schema(
-  {
-    owner: {
-      type: Schema.Types.ObjectId,
-      ref: 'User', // Reference to another model
-      required: true
-    }
-  },
-  {
-    // Automatically creates createdAt and updatedAt fields
-    timestamps: true
-  }
-);
+const schema = new mongoose.Schema({
+  name:
+  {type: String, required: true, trim: true},
 
-// removes fields when transformed to json
-schema.set('toJSON', {
-  transform: (doc, ret) => {
-    delete ret.__v;
-    return ret;
-  }
-});
+  bio:
+  {type: String, required: true}
 
-// removes fields when transformed to object
-schema.set('toJSON', {
-  transform: (doc, ret) => {
-    delete ret.__v;
-    return ret;
-  }
-});
+}, {timestamps: true});
 
 schema.index({name: 1});
 
-// TODO: Change this to a sutable entity name
-const Entity = model('Entity', schema);
+const Entity = mongoose.model('Author', schema);
 module.exports = Entity;

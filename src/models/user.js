@@ -1,41 +1,41 @@
-import mongoose from 'mongoose';
+const bcrypt = require('bcryptjs');
 
-const {Schema, model} = mongoose;
+const mongoose = require('mongoose');
 
-// TODO: This is just a sample. all the content here should bechanged before deploying the project!!
+const schema = mongoose.Schema({
+  email:
+  {type: String, required: true, trim: true, unique: true, lowercase: true},
 
-const schema = new Schema(
-  {
-    owner: {
-      type: Schema.Types.ObjectId,
-      ref: 'User', // Reference to another model
-      required: true
-    }
-  },
-  {
-    // Automatically creates createdAt and updatedAt fields
-    timestamps: true
-  }
-);
+  firstName:
+  {type: String, required: true, trim: true},
 
-// removes fields when transformed to json
-schema.set('toJSON', {
-  transform: (doc, ret) => {
-    delete ret.__v;
-    return ret;
-  }
+  lastName:
+  {type: String, required: true, trim: true},
+
+  dob:
+  {type: Date, required: true},
+
+  password:
+  {type: String, required: true, minlength: 8, select: false},
+
+  role:
+  {type: String, enum: ['user', 'admin'], default: 'user'}
+
+}, {timestamps: true});
+
+// Hash password before saving
+schema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
 });
 
-// removes fields when transformed to object
-schema.set('toJSON', {
-  transform: (doc, ret) => {
-    delete ret.__v;
-    return ret;
-  }
-});
+// Instance method to check password
+schema.methods.correctPassword = async function (candidatePassword, userPassword) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
-schema.index({name: 1});
+schema.index({email: 1});
 
-// TODO: Change this to a sutable entity name
-const Entity = model('Entity', schema);
+const Entity = mongoose.model('User', schema);
 module.exports = Entity;

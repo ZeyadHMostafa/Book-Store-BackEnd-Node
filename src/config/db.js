@@ -12,4 +12,24 @@ async function start() {
     });
 }
 
+mongoose.set('toJSON', {
+  transform: (doc, ret) => {
+    ret.id = ret._id; // Friendly 'id' instead of '_id'
+    delete ret._id;
+    delete ret.__v;
+    delete ret.password; // Extra safety for User model
+    return ret;
+  }
+});
+
+mongoose.set('toObject', {
+  transform: (doc, ret) => {
+    ret.id = ret._id; // Friendly 'id' instead of '_id'
+    delete ret._id;
+    delete ret.__v;
+    delete ret.password; // Extra safety for User model
+    return ret;
+  }
+});
+
 module.exports = {start};

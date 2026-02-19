@@ -1,41 +1,44 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-const {Schema, model} = mongoose;
+const schema = new mongoose.Schema({
+  name:
+  {type: String, required: true, trim: true},
 
-// TODO: This is just a sample. all the content here should bechanged before deploying the project!!
-
-const schema = new Schema(
+  author:
   {
-    owner: {
-      type: Schema.Types.ObjectId,
-      ref: 'User', // Reference to another model
-      required: true
-    }
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Author',
+    required: true
   },
+
+  category:
   {
-    // Automatically creates createdAt and updatedAt fields
-    timestamps: true
-  }
-);
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    required: true
+  },
 
-// removes fields when transformed to json
-schema.set('toJSON', {
-  transform: (doc, ret) => {
-    delete ret.__v;
-    return ret;
-  }
-});
+  price:
+  {type: Number, required: true, min: 0},
 
-// removes fields when transformed to object
-schema.set('toJSON', {
-  transform: (doc, ret) => {
-    delete ret.__v;
-    return ret;
-  }
-});
+  description:
+  {type: String},
+
+  bookCover:
+  {type: String, required: true},
+
+  stock:
+  {type: Number, default: 0},
+
+  averageRating:
+  {type: Number, default: 0},
+
+  numReviews:
+  {type: Number, default: 0}
+}, {timestamps: true});
 
 schema.index({name: 1});
 
 // TODO: Change this to a sutable entity name
-const Entity = model('Entity', schema);
+const Entity = mongoose.model('Book', schema);
 module.exports = Entity;
