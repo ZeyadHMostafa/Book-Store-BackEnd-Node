@@ -1,13 +1,16 @@
-const express = require("express");
+const process = require('node:process');
+const express = require('express');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const router = require("./routes");
+const router = require('./routes');
 
-app.use('/',router);
+async function start() {
+  app.use('/', router);
 
-app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
-});
+  app.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
+  });
+}
 
-module.exports= app;
+module.exports = {app, start};

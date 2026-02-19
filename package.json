@@ -1,10 +1,10 @@
 {
   "name": "book-store-backend-node",
+  "type": "commonjs",
   "version": "1.0.0",
   "description": "Backend to handle serverside of e-commerce book store",
-  "license": "ISC",
   "author": "",
-  "type": "commonjs",
+  "license": "ISC",
   "main": "index.js",
   "scripts": {
     "start": "node --watch index.js",
@@ -21,8 +21,7 @@
     "mongoose": "^9.2.1"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "eslint": "^10.0.0",
-    "globals": "^17.3.0"
+    "@antfu/eslint-config": "^7.4.3",
+    "eslint": "^10.0.0"
   }
 }

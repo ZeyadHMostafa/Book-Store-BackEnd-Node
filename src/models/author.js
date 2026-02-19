@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
-const { Schema, model } = mongoose;
+const {Schema, model} = mongoose;
 
-//TODO: This is just a sample. all the content here should bechanged before deploying the project!!
+// TODO: This is just a sample. all the content here should bechanged before deploying the project!!
 
 const schema = new Schema(
   {
@@ -14,7 +14,7 @@ const schema = new Schema(
   },
   {
     // Automatically creates createdAt and updatedAt fields
-    timestamps: true 
+    timestamps: true
   }
 );
 
@@ -26,7 +26,7 @@ schema.set('toJSON', {
   }
 });
 
-//removes fields when transformed to object
+// removes fields when transformed to object
 schema.set('toJSON', {
   transform: (doc, ret) => {
     delete ret.__v;
@@ -34,8 +34,8 @@ schema.set('toJSON', {
   }
 });
 
-schema.index({ name: 1 });
+schema.index({name: 1});
 
-//TODO: Change this to a sutable entity name
+// TODO: Change this to a sutable entity name
 const Entity = model('Entity', schema);
 module.exports = Entity;

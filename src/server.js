@@ -1,7 +1,9 @@
-require("dotenv").config();
+require('dotenv').config();
 
-const app = require("./app"); //starts automaitcally
-app;
+const app = require('./app');
 
-const db = require("./config/db");
-db.start;
+app.start();
+
+const db = require('./config/db');
+
+db.start();
