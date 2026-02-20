@@ -29,7 +29,9 @@ const validate = (schema) => (req, res, next) => {
   }
 
   if (error) {
-    const errorMessage = error.details.map((details) => details.message).join(', ');
+    const errorMessage = error.details
+      .map((details) => details.message)
+      .join(', ');
     throw new ApiError(400, errorMessage);
   }
 

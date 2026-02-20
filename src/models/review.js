@@ -1,34 +1,33 @@
 const mongoose = require('mongoose');
 
-const schema = new mongoose.Schema({
-  book:
+const schema = new mongoose.Schema(
   {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Book',
-    required: true
-  },
+    book: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Book',
+      required: true
+    },
 
-  user:
-  {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
 
-  rating:
-  {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 5
-  },
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5
+    },
 
-  comment:
-  {
-    type: String,
-    trim: true
-  }
-}, {timestamps: true});
+    comment: {
+      type: String,
+      trim: true
+    }
+  },
+  {timestamps: true}
+);
 
 schema.index({book: 1, user: 1}, {unique: true});
 

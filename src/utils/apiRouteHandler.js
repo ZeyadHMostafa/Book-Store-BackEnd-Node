@@ -1,7 +1,7 @@
 const logger = require('../config/logger');
 
-const handle = (controllerAction, status = 200) =>
-  async (req, res, next) => {
+const handle = (controllerAction, status = 200) => {
+  return async (req, res, next) => {
     const result = await controllerAction(req);
 
     logger.info({path: req.path, method: req.method}, 'Request Successful');
@@ -11,5 +11,6 @@ const handle = (controllerAction, status = 200) =>
       data: result
     });
   };
+};
 
 module.exports = handle;

@@ -7,21 +7,21 @@ const authorSchema = require('../validators/authorSchema');
 
 const router = express.Router();
 
-router.route('/')
+router
+  .route('/')
   .get(handle(() => authorController.getAll()))
   .post(
     validate(authorSchema),
     handle((req) => authorController.create(req.body))
   );
 
-router.route('/:id')
+router
+  .route('/:id')
   .get(handle((req) => authorController.getById(req.params.id)))
   .patch(
     validate(authorSchema),
     handle((req) => authorController.update(req.params.id, req.body))
   )
-  .delete(
-    handle((req) => authorController.delete(req.params.id))
-  );
+  .delete(handle((req) => authorController.delete(req.params.id)));
 
 module.exports = router;

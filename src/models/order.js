@@ -1,51 +1,53 @@
 const mongoose = require('mongoose');
 
-const schema = new mongoose.Schema({
-  user:
+const schema = new mongoose.Schema(
   {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+
+    items: [
+      {
+        book: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Book',
+          required: true
+        },
+        quantity: {type: Number, required: true},
+        priceAtPurchase: {type: Number, required: true}
+      }
+    ],
+
+    totalAmount: {type: Number, required: true},
+
+    shippingAddress: {
+      street: {type: String, required: true},
+      city: {type: String, required: true},
+      zipCode: {type: String, required: true}
+    },
+
+    status: {
+      type: String,
+      enum: ['processing', 'out for delivery', 'delivered', 'cancelled'],
+      default: 'processing'
+    },
+
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'success', 'failed'],
+      default: 'pending'
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: ['COD', 'Stripe', 'PayPal'],
+      default: 'COD'
+    }
   },
-
-  items:
-  [{
-    book: {type: mongoose.Schema.Types.ObjectId, ref: 'Book', required: true},
-    quantity: {type: Number, required: true},
-    priceAtPurchase: {type: Number, required: true}
-  }],
-
-  totalAmount:
-  {type: Number, required: true},
-
-  shippingAddress:
-  {
-    street: {type: String, required: true},
-    city: {type: String, required: true},
-    zipCode: {type: String, required: true}
-  },
-
-  status:
-  {
-    type: String,
-    enum: ['processing', 'out for delivery', 'delivered', 'cancelled'],
-    default: 'processing'
-  },
-
-  paymentStatus:
-  {
-    type: String,
-    enum: ['pending', 'success', 'failed'],
-    default: 'pending'
-  },
-
-  paymentMethod:
-  {
-    type: String,
-    enum: ['COD', 'Stripe', 'PayPal'],
-    default: 'COD'
-  }
-}, {timestamps: true});
+  {timestamps: true}
+);
 
 schema.index({user: 1, createdAt: -1});
 

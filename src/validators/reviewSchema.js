@@ -13,18 +13,9 @@ const reviewSchema = Joi.object({
     .messages({'string.pattern.base': 'Invalid User ID format.'})
     .label('User'),
 
-  rating: Joi.number()
-    .integer()
-    .min(1)
-    .max(5)
-    .required()
-    .label('Rating'),
+  rating: Joi.number().integer().min(1).max(5).required().label('Rating'),
 
-  comment: Joi.string()
-    .trim()
-    .max(1000)
-    .allow('', null)
-    .label('Comment')
+  comment: Joi.string().trim().max(1000).allow('', null).label('Comment')
 });
 
 module.exports = reviewSchema;
