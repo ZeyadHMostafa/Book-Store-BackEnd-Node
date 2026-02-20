@@ -16,7 +16,12 @@ const validate = (schema) => (req, res, next) => {
   const {value, error} = schema.validate(req.body, {
     abortEarly: false,
     allowUnknown: true,
-    stripUnknown: true
+    stripUnknown: true,
+    errors: {
+      wrap: {
+        label: '' // removes double quotes around field names
+      }
+    }
   });
 
   if (!value) {
