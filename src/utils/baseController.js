@@ -1,4 +1,4 @@
-const { ApiError } = require('../utils/apiError');
+const {ApiError} = require('./apiError');
 
 class BaseController {
   constructor(model) {
@@ -22,7 +22,7 @@ class BaseController {
   async update(id, data) {
     const doc = await this.model.findByIdAndUpdate(id, data, {
       new: true,
-      runValidators: true,
+      runValidators: true
     });
     if (!doc) throw new ApiError(404, 'Resource not found');
     return doc;
@@ -31,7 +31,7 @@ class BaseController {
   async delete(id) {
     const doc = await this.model.findByIdAndDelete(id);
     if (!doc) throw new ApiError(404, 'Resource not found');
-    return { message: 'Deleted successfully' };
+    return {message: 'Deleted successfully'};
   }
 }
 

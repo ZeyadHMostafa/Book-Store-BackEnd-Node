@@ -1,13 +1,13 @@
 const process = require('node:process');
 const pino = require('pino');
 
-// Use pino-pretty in development environment
+// Check if we are in Netlify or Production
+const isDev = process.env.NODE_ENV !== 'production';
+
 const logger = pino({
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-  transport:
-    process.env.NODE_ENV !== 'production'
-      ? {target: 'pino-pretty', options: {colorize: true}}
-      : undefined
+  level: isDev ? 'debug' : 'info',
+  base: {pid: false}, // Removes the PID for cleaner terminal output
+  timestamp: pino.stdTimeFunctions.isoTime // Use human-readable ISO strings
 });
 
 module.exports = logger;
