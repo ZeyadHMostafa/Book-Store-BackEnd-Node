@@ -22,7 +22,11 @@ module.exports = antfu(
       'style/max-statements-per-line': ['error', {max: 2}],
       'style/semi': ['error', 'always', {omitLastInOneLineBlock: true}],
       'style/comma-dangle': ['error', 'never'],
-      'style/operator-linebreak': ['warn', 'before'],
+      'style/operator-linebreak': [
+        'warn',
+        'after',
+        {overrides: {'=>': 'none'}}
+      ],
       'style/arrow-parens': ['warn', 'always'],
       'style/brace-style': ['error', '1tbs', {allowSingleLine: true}],
       'prefer-template': 'warn',
