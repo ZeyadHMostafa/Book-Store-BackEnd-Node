@@ -9,7 +9,5 @@ const schema = new Schema({
 
 }, {timestamps: true});
 
-schema.index({name: 1});
-
 const Entity = model('Category', schema);
 module.exports = Entity;

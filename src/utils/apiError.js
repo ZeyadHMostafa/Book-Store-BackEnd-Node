@@ -19,9 +19,13 @@ const validate = (schema) => (req, res, next) => {
     stripUnknown: true
   });
 
+  if (!value) {
+    throw new ApiError(400, 'no suitable json was passed');
+  }
+
   if (error) {
     const errorMessage = error.details.map((details) => details.message).join(', ');
-    return next(new ApiError(400, errorMessage));
+    throw new ApiError(400, errorMessage);
   }
 
   Object.assign(req.body, value);
