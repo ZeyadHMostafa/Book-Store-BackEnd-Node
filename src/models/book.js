@@ -39,6 +39,5 @@ const schema = new mongoose.Schema({
 
 schema.index({name: 1});
 
-// TODO: Change this to a sutable entity name
 const Entity = mongoose.model('Book', schema);
 module.exports = Entity;
