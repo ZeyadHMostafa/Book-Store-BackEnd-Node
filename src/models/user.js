@@ -1,41 +1,44 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 const mongoose = require('mongoose');
 
-const schema = mongoose.Schema({
-  email:
-  {type: String, required: true, trim: true, unique: true, lowercase: true},
+const schema = mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+      lowercase: true
+    },
 
-  firstName:
-  {type: String, required: true, trim: true},
+    firstName: {type: String, required: true, trim: true},
 
-  lastName:
-  {type: String, required: true, trim: true},
+    lastName: {type: String, required: true, trim: true},
 
-  dob:
-  {type: Date, required: true},
+    dob: {type: Date, required: true},
 
-  password:
-  {type: String, required: true, minlength: 8, select: false},
+    password: {type: String, required: true, minlength: 8, select: false},
 
-  role:
-  {type: String, enum: ['user', 'admin'], default: 'user'}
-
-}, {timestamps: true});
+    role: {type: String, enum: ['user', 'admin'], default: 'user'}
+  },
+  {timestamps: true}
+);
 
 // Hash password before saving
-schema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
+schema.pre('save', async function () {
+  if (!this.isModified('password')) return this;
+  this.password = bcrypt.hashSync(this.password, 10);
+  return this;
 });
 
 // Instance method to check password
-schema.methods.correctPassword = async function (candidatePassword, userPassword) {
+schema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
-
-schema.index({email: 1});
 
 const Entity = mongoose.model('User', schema);
 module.exports = Entity;

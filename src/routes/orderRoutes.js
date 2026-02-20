@@ -1,10 +1,27 @@
 const express = require('express');
 
-const route = express.Router();
+const orderController = require('../controllers/orderController');
+const {validate} = require('../utils/apiError');
+const handle = require('../utils/apiRouteHandler');
+const orderSchema = require('../validators/orderSchema');
 
-route.post('/', (req, res, next) => {});
-route.get('/:id', (req, res, next) => {});
-route.patch('/:id', (req, res, next) => {});
-route.delete('/:id', (req, res, next) => {});
+const router = express.Router();
 
-module.exports = route;
+router
+  .route('/')
+  .get(handle(() => orderController.getAll()))
+  .post(
+    validate(orderSchema),
+    handle((req) => orderController.create(req.body))
+  );
+
+router
+  .route('/:id')
+  .get(handle((req) => orderController.getById(req.params.id)))
+  .patch(
+    validate(orderSchema),
+    handle((req) => orderController.update(req.params.id, req.body))
+  )
+  .delete(handle((req) => orderController.delete(req.params.id)));
+
+module.exports = router;

@@ -1,3 +1,1 @@
-const process = require('node:process');
-
-process;
+// const process = require('node:process');
