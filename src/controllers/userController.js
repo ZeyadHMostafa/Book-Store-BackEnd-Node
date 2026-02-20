@@ -1,28 +1,10 @@
-const Entity = require('../models/user');
+const userModel = require('../models/user');
+const BaseController = require('../utils/baseController');
 
-async function create(data) {
-  const entity = await Entity.create(data);
-  return entity;
+class UserController extends BaseController {
+  constructor() {
+    super(userModel);
+  }
 }
 
-async function find(data) {
-  const entities = await Entity.find(data);
-  return entities;
-}
-
-async function get(id) {
-  const entity = await Entity.findById(id);
-  return entity;
-}
-
-async function update(id, data) {
-  const entity = await Entity.findByIdAndUpdate(id, data);
-  return entity;
-}
-
-async function remove(id) {
-  await Entity.findByIdAndDelete(id);
-  return true;
-}
-
-module.exports = {create, get, find, update, remove};
+module.exports = new UserController();

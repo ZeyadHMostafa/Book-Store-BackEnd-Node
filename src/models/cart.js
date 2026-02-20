@@ -25,7 +25,5 @@ const schema = new mongoose.Schema({
   }]
 }, {timestamps: true});
 
-schema.index({user: 1});
-
 const Cart = mongoose.model('Cart', schema);
 module.exports = Cart;
