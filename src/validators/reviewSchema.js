@@ -1,22 +1,30 @@
 const Joi = require('joi');
 
-// TODO: This is just an example, change it before releasing to production
-const entitySchema = Joi.object({
-  username: Joi.string()
-    .alphanum()
-    .min(3)
-    .max(30)
-    .required(),
-  password: Joi.string()
-    .pattern(/^[a-z0-9]{3,30}$/)
-    .required(),
-  email: Joi.string()
-    .email({minDomainSegments: 2, tlds: {allow: ['com', 'net']}})
-    .required(),
-  birthYear: Joi.number()
+const reviewSchema = Joi.object({
+  book: Joi.string()
+    .pattern(/^[0-9a-f]{24}$/i)
+    .required()
+    .messages({'string.pattern.base': 'Invalid Book ID format.'})
+    .label('Book'),
+
+  user: Joi.string()
+    .pattern(/^[0-9a-f]{24}$/i)
+    .required()
+    .messages({'string.pattern.base': 'Invalid User ID format.'})
+    .label('User'),
+
+  rating: Joi.number()
     .integer()
-    .min(1900)
-    .max(2013)
+    .min(1)
+    .max(5)
+    .required()
+    .label('Rating'),
+
+  comment: Joi.string()
+    .trim()
+    .max(1000)
+    .allow('', null)
+    .label('Comment')
 });
 
-module.exports = entitySchema;
+module.exports = reviewSchema;

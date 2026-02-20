@@ -1,22 +1,45 @@
 const Joi = require('joi');
 
-// TODO: This is just an example, change it before releasing to production
-const entitySchema = Joi.object({
-  username: Joi.string()
-    .alphanum()
-    .min(3)
-    .max(30)
-    .required(),
-  password: Joi.string()
-    .pattern(/^[a-z0-9]{3,30}$/)
-    .required(),
+const userSchema = Joi.object({
   email: Joi.string()
-    .email({minDomainSegments: 2, tlds: {allow: ['com', 'net']}})
-    .required(),
-  birthYear: Joi.number()
-    .integer()
-    .min(1900)
-    .max(2013)
+    .email()
+    .lowercase()
+    .trim()
+    .required()
+    .label('Email'),
+
+  firstName: Joi.string()
+    .trim()
+    .min(1)
+    .max(100)
+    .required()
+    .label('First Name'),
+
+  lastName: Joi.string()
+    .trim()
+    .min(1)
+    .max(100)
+    .required()
+    .label('Last Name'),
+
+  dob: Joi.date()
+    .less('now')
+    .required()
+    .messages({
+      'date.less': 'Date of birth cannot be in the future.'
+    })
+    .label('Date of birth'),
+
+  password: Joi.string()
+    .min(8)
+    .required()
+    // TODO: add regex
+    .label('Password'),
+
+  role: Joi.string()
+    .valid('user', 'admin')
+    .default('user')
+    .label('Role')
 });
 
-module.exports = entitySchema;
+module.exports = userSchema;
