@@ -14,11 +14,7 @@ const orderSchema = Joi.object({
           .pattern(/^[0-9a-f]{24}$/i)
           .required()
           .label('Book ID'),
-        quantity: Joi.number()
-          .integer()
-          .min(1)
-          .required()
-          .label('Quantity')
+        quantity: Joi.number().integer().min(1).required().label('Quantity')
 
         // TODO: this should likely be calculated not stored!! check with the rest of the team
         // priceAtPurchase: Joi.number()
@@ -43,7 +39,9 @@ const orderSchema = Joi.object({
     street: Joi.string().trim().required().label('Street'),
     city: Joi.string().trim().required().label('City'),
     zipCode: Joi.string().trim().required().label('Zip Code')
-  }).required().label('Shipping Address'),
+  })
+    .required()
+    .label('Shipping Address'),
 
   status: Joi.string()
     .valid('processing', 'out for delivery', 'delivered', 'cancelled')
