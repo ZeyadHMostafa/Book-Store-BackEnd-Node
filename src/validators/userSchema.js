@@ -25,4 +25,8 @@ const userSchema = Joi.object({
   // role: Joi.string().valid('user', 'admin').default('user').label('Role')
 });
 
-module.exports = userSchema;
+const loginSchema = userSchema.fork(
+  ['firstName', 'lastName', 'dob'],
+  (_schema) => Joi.any().strip()
+);
+module.exports = {userSchema, loginSchema};

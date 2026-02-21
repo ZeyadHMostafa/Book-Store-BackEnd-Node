@@ -3,8 +3,7 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const {validate} = require('../utils/apiError');
 const handle = require('../utils/apiRouteHandler');
-const loginSchema = require('../validators/loginScema');
-const userSchema = require('../validators/userSchema');
+const {userSchema, loginSchema} = require('../validators/userSchema');
 
 const router = express.Router();
 
