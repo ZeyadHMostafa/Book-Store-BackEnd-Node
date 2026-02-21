@@ -22,7 +22,7 @@ const userSchema = Joi.object({
     .label('Password')
 
   // Todo, have a specific function that updates role only
-  // role: Joi.string().valid('user', 'admin').default('user').label('Role')
+  // role: Joi.string().valid('user', 'admin').label('Role')
 });
 
 const loginSchema = userSchema.fork(

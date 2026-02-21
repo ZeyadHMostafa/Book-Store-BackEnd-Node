@@ -45,17 +45,14 @@ const orderSchema = Joi.object({
 
   status: Joi.string()
     .valid('processing', 'out for delivery', 'delivered', 'cancelled')
-    .default('processing')
     .label('Status'),
 
   paymentStatus: Joi.string()
     .valid('pending', 'success', 'failed')
-    .default('pending')
     .label('Payment Status'),
 
   paymentMethod: Joi.string()
     .valid('COD', 'Stripe', 'PayPal')
-    .default('COD')
     .label('Payment Method')
 });
 

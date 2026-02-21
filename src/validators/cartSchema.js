@@ -16,12 +16,7 @@ const cartSchema = Joi.object({
           .messages({'string.pattern.base': 'Invalid User ID format.'})
           .label('Book ID'),
 
-        quantity: Joi.number()
-          .integer()
-          .min(1)
-          .default(1)
-          .required()
-          .label('Quantity')
+        quantity: Joi.number().integer().min(1).required().label('Quantity')
       })
     )
     .required()
