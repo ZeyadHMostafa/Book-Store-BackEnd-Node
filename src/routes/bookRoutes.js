@@ -3,25 +3,33 @@ const express = require('express');
 const bookController = require('../controllers/bookController');
 const {validate} = require('../utils/apiError');
 const handle = require('../utils/apiRouteHandler');
-const bookSchema = require('../validators/bookSchema');
+const {bookSchema, bookUpdateSchema} = require('../validators/bookSchema');
 
 const router = express.Router();
 
 router
   .route('/')
-  .get(handle(() => bookController.getAll()))
+  .get(handle((req) => bookController.getAll(req)))
   .post(
     validate(bookSchema),
-    handle((req) => bookController.create(req.body))
+    handle((req) => bookController.create(req), 201)
   );
 
 router
   .route('/:id')
-  .get(handle((req) => bookController.getById(req.params.id)))
+  .get(handle((req) => bookController.getById(req)))
   .patch(
-    validate(bookSchema),
-    handle((req) => bookController.update(req.params.id, req.body))
+    validate(bookUpdateSchema),
+    handle((req) => bookController.update(req))
   )
-  .delete(handle((req) => bookController.delete(req.params.id)));
+  .delete(handle((req) => bookController.delete(req)));
+
+router
+  .route('/author/:authorId')
+  .get(handle((req) => bookController.getBooksByAuthor(req)));
+
+router
+  .route('/category/:categoryId')
+  .get(handle((req) => bookController.getBooksByCategory(req)));
 
 module.exports = router;

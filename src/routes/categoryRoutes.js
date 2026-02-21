@@ -9,19 +9,19 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(handle(() => categoryController.getAll()))
+  .get(handle((req) => categoryController.getAll(req)))
   .post(
     validate(categorySchema),
-    handle((req) => categoryController.create(req.body))
+    handle((req) => categoryController.create(req), 201)
   );
 
 router
   .route('/:id')
-  .get(handle((req) => categoryController.getById(req.params.id)))
+  .get(handle((req) => categoryController.getById(req)))
   .patch(
     validate(categorySchema),
-    handle((req) => categoryController.update(req.params.id, req.body))
+    handle((req) => categoryController.update(req))
   )
-  .delete(handle((req) => categoryController.delete(req.params.id)));
+  .delete(handle((req) => categoryController.delete(req)));
 
 module.exports = router;

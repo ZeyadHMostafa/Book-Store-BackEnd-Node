@@ -35,7 +35,7 @@ const validate = (schema) => (req, res, next) => {
     throw new ApiError(400, errorMessage);
   }
 
-  Object.assign(req.body, value);
+  req.body = value;
   return next();
 };
 

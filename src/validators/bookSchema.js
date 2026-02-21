@@ -23,15 +23,21 @@ const bookSchema = Joi.object({
     .allow('', null)
     .label('Description'),
 
-  bookCover: Joi.string().uri().required().label('Book Cover URL').messages({
-    'string.uri':
-      'not a valid URI. if this should be allowed contact server owner'
+  bookCover: Joi.string().required().label('Book Cover URL/Path').messages({
+    'string.base':
+      'Must be a valid string path or URI.'
   }),
 
-  stock: Joi.number().integer().min(0).default(0).label('Stock Quantity')
+  stock: Joi.number().integer().min(0).label('Stock Quantity')
 
   // Note: averageRating and numReviews are omitted
   // because they are managed by the system, not the user input.
 });
 
-module.exports = bookSchema;
+const bookUpdateSchema = bookSchema.fork(
+  ['name', 'author', 'category', 'price', 'description', 'bookCover', 'stock'],
+  (schema) => schema.optional(),
+  (schema) => schema.default()
+);
+
+module.exports = {bookSchema, bookUpdateSchema};

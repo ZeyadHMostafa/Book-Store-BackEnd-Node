@@ -9,19 +9,19 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(handle(() => authorController.getAll()))
+  .get(handle((req) => authorController.getAll(req)))
   .post(
     validate(authorSchema),
-    handle((req) => authorController.create(req.body))
+    handle((req) => authorController.create(req), 201)
   );
 
 router
   .route('/:id')
-  .get(handle((req) => authorController.getById(req.params.id)))
+  .get(handle((req) => authorController.getById(req)))
   .patch(
     validate(authorSchema),
-    handle((req) => authorController.update(req.params.id, req.body))
+    handle((req) => authorController.update(req))
   )
-  .delete(handle((req) => authorController.delete(req.params.id)));
+  .delete(handle((req) => authorController.delete(req)));
 
 module.exports = router;
