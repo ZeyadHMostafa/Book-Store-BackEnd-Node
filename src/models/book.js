@@ -31,7 +31,7 @@ const schema = new mongoose.Schema(
 
     bookCover: {type: String, required: true},
 
-    stock: {type: Number, default: 6},
+    stock: {type: Number, default: 1},
 
     averageRating: {type: Number, default: 0},
 
