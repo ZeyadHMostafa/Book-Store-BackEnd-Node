@@ -31,7 +31,7 @@ const schema = new mongoose.Schema(
 
     bookCover: {type: String, required: true},
 
-    stock: {type: Number, default: 0},
+    stock: {type: Number, default: 6},
 
     averageRating: {type: Number, default: 0},
 
@@ -68,20 +68,6 @@ schema.pre('findOneAndUpdate', async function () {
     this.setUpdate(update);
   } catch (err) {
     throw new ApiError(400, `Error uploading image to Cloudinary: ${err.message}`);
-  }
-});
-
-schema.pre('save', function () {
-  if (this.stock === 0) {
-    this.stock = 1;
-  }
-});
-
-schema.pre('findOneAndUpdate', function () {
-  const update = this.getUpdate();
-  if (update && update.stock === 0) {
-    update.stock = 1;
-    this.setUpdate(update);
   }
 });
 

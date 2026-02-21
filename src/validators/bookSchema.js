@@ -28,7 +28,7 @@ const bookSchema = Joi.object({
       'Must be a valid string path or URI.'
   }),
 
-  stock: Joi.number().integer().min(0).default(0).label('Stock Quantity')
+  stock: Joi.number().integer().min(0).label('Stock Quantity')
 
   // Note: averageRating and numReviews are omitted
   // because they are managed by the system, not the user input.
@@ -36,7 +36,8 @@ const bookSchema = Joi.object({
 
 const bookUpdateSchema = bookSchema.fork(
   ['name', 'author', 'category', 'price', 'description', 'bookCover', 'stock'],
-  (schema) => schema.optional()
+  (schema) => schema.optional(),
+  (schema) => schema.default()
 );
 
 module.exports = {bookSchema, bookUpdateSchema};
