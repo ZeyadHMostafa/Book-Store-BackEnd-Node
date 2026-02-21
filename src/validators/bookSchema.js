@@ -24,8 +24,7 @@ const bookSchema = Joi.object({
     .label('Description'),
 
   bookCover: Joi.string().required().label('Book Cover URL/Path').messages({
-    'string.base':
-      'Must be a valid string path or URI.'
+    'string.base': 'Must be a valid string path or URI.'
   }),
 
   stock: Joi.number().integer().min(0).label('Stock Quantity')
@@ -36,8 +35,7 @@ const bookSchema = Joi.object({
 
 const bookUpdateSchema = bookSchema.fork(
   ['name', 'author', 'category', 'price', 'description', 'bookCover', 'stock'],
-  (schema) => schema.optional(),
-  (schema) => schema.default()
+  (schema) => schema.optional()
 );
 
 module.exports = {bookSchema, bookUpdateSchema};

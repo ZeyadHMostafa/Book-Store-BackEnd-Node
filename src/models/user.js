@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 
 const mongoose = require('mongoose');
+const {generateToken} = require('../services/authService');
 
 const schema = mongoose.Schema(
   {
@@ -33,11 +34,13 @@ schema.pre('save', async function () {
 });
 
 // Instance method to check password
-schema.methods.correctPassword = async function (
-  candidatePassword,
-  userPassword
-) {
-  return await bcrypt.compare(candidatePassword, userPassword);
+schema.methods.correctPassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Instance method to generate JWT token
+schema.methods.generateToken = async function () {
+  return await generateToken(this._id);
 };
 
 const Entity = mongoose.model('User', schema);
