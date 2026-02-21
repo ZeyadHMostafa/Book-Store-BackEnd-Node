@@ -19,9 +19,10 @@ const userSchema = Joi.object({
     .min(8)
     .required()
     // TODO: add regex
-    .label('Password'),
+    .label('Password')
 
-  role: Joi.string().valid('user', 'admin').default('user').label('Role')
+  // Todo, have a specific function that updates role only
+  // role: Joi.string().valid('user', 'admin').default('user').label('Role')
 });
 
 module.exports = userSchema;
