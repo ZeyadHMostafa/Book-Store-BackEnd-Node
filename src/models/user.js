@@ -40,7 +40,7 @@ schema.methods.correctPassword = async function (candidatePassword) {
 
 // Instance method to generate JWT token
 schema.methods.generateToken = async function () {
-  return await generateToken(this._id);
+  return await generateToken(this._id, this.role);
 };
 
 const Entity = mongoose.model('User', schema);
