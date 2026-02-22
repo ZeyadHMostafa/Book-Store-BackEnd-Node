@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const generateToken = async (id) => {
-  return await jwt.sign({id}, JWT_SECRET, {expiresIn: '1h'});
+const generateToken = async (id, role) => {
+  return await jwt.sign({id, role}, JWT_SECRET, {expiresIn: '1h'});
 };
 
 const authenticate = async (req, res, next) => {
