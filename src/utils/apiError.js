@@ -32,29 +32,31 @@ const validate = (schema, paramsSchema = null) => {
       req.params = paramValue;
     }
 
-    const {value, error} = schema.validate(req.body, {
-      abortEarly: false,
-      allowUnknown: true,
-      stripUnknown: true,
-      errors: {
-        wrap: {
-          label: '' // removes double quotes around field names
+    if (schema) {
+      const {value, error} = schema.validate(req.body, {
+        abortEarly: false,
+        allowUnknown: true,
+        stripUnknown: true,
+        errors: {
+          wrap: {
+            label: '' // removes double quotes around field names
+          }
         }
+      });
+
+      if (!value) {
+        throw new ApiError(400, 'no suitable json was passed');
       }
-    });
 
-    if (!value) {
-      throw new ApiError(400, 'no suitable json was passed');
+      if (error) {
+        const errorMessage = error.details
+          .map((details) => details.message)
+          .join(', ');
+        throw new ApiError(400, errorMessage);
+      }
+
+      req.body = value;
     }
-
-    if (error) {
-      const errorMessage = error.details
-        .map((details) => details.message)
-        .join(', ');
-      throw new ApiError(400, errorMessage);
-    }
-
-    req.body = value;
     return next();
   };
 };
