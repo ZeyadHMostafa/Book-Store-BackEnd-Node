@@ -1,27 +1,29 @@
 const express = require('express');
-
 const cartController = require('../controllers/cartController');
+const {authenticate} = require('../services/authService');
 const {validate} = require('../utils/apiError');
 const handle = require('../utils/apiRouteHandler');
-const cartSchema = require('../validators/cartSchema');
+const {
+  addToCartSchema,
+  removeFromCartSchema
+} = require('../validators/cartSchema');
 
 const router = express.Router();
 
+router.use(authenticate);
 router
   .route('/')
-  .get(handle(() => cartController.getAll()))
+  .get(handle((req) => cartController.getCart(req.user.id)))
   .post(
-    validate(cartSchema),
-    handle((req) => cartController.create(req.body))
+    validate(addToCartSchema),
+    handle((req) =>
+      cartController.addToCart(req.user.id, req.body.book, req.body.quantity)
+    )
   );
 
-router
-  .route('/:id')
-  .get(handle((req) => cartController.getById(req.params.id)))
-  .patch(
-    validate(cartSchema),
-    handle((req) => cartController.update(req.params.id, req.body))
-  )
-  .delete(handle((req) => cartController.delete(req.params.id)));
+router.route('/:bookId').delete(
+  validate(null, removeFromCartSchema),
+  handle((req) => cartController.removeFromCart(req.user.id, req.params.bookId))
+);
 
 module.exports = router;

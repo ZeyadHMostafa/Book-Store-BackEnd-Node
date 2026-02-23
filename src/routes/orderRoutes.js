@@ -1,27 +1,49 @@
 const express = require('express');
-
 const orderController = require('../controllers/orderController');
+const {authenticate, authorize} = require('../services/authService');
 const {validate} = require('../utils/apiError');
 const handle = require('../utils/apiRouteHandler');
-const orderSchema = require('../validators/orderSchema');
+const {
+  placeOrderSchema,
+  updateOrderStatusSchema
+} = require('../validators/orderSchema');
 
 const router = express.Router();
 
+router.use(authenticate);
 router
   .route('/')
-  .get(handle((req) => orderController.getAll(req)))
+  .get(
+    authorize('admin'),
+    handle(() => orderController.getAllOrders())
+  )
   .post(
-    validate(orderSchema),
-    handle((req) => orderController.create(req))
+    validate(placeOrderSchema),
+    handle(
+      (req) =>
+        orderController.placeOrder(
+          req.user.id,
+          req.body.shippingAddress,
+          req.body.paymentMethod
+        ),
+      201
+    )
   );
 
 router
+  .route('/my-orders')
+  .get(handle((req) => orderController.getMyOrders(req.user.id)));
+
+router
   .route('/:id')
-  .get(handle((req) => orderController.getById(req)))
   .patch(
-    validate(orderSchema),
-    handle((req) => orderController.update(req))
+    authorize('admin'),
+    validate(updateOrderStatusSchema),
+    handle((req) => orderController.updateStatus(req.params.id, req.body))
   )
-  .delete(handle((req) => orderController.delete(req)));
+  .delete(
+    authorize('admin'),
+    handle((req) => orderController.delete(req.params.id))
+  );
 
 module.exports = router;
