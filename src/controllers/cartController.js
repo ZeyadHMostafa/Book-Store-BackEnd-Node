@@ -17,7 +17,7 @@ class CartController extends BaseController {
     let cart = await this.model.findOne({user: userId});
 
     if (!cart) {
-      cart = this.model.create({
+      cart = await this.model.create({
         user: userId,
         items: [{book: bookId, quantity}]
       });
@@ -31,7 +31,6 @@ class CartController extends BaseController {
         cart.items.push({book: bookId, quantity});
       }
     }
-
     return await cart.save();
   }
 

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
-const boolModel = require('../models/Book');
-const cartModel = require('../models/Cart');
+const logger = require('../config/logger');
+const bookmodel = require('../models/book');
+const cartModel = require('../models/cart');
 const orderModel = require('../models/order');
 const {ApiError} = require('../utils/apiError');
 const BaseController = require('../utils/baseController');
@@ -34,7 +35,7 @@ class OrderController extends BaseController {
         }
 
         // Deduct Stock Atomics
-        await boolModel.findByIdAndUpdate(
+        await bookmodel.findByIdAndUpdate(
           item.book._id,
           {$inc: {stock: -item.quantity}},
           {session}
@@ -48,21 +49,26 @@ class OrderController extends BaseController {
         });
       }
 
-      // 3. Create the Order
-      const newOrder = orderModel.create({
-        user: userId,
-        items: orderItems,
-        totalAmount,
-        shippingAddress,
-        paymentMethod
-      });
+      const [savedOrder] = await orderModel.create(
+        [
+          {
+            user: userId,
+            items: orderItems,
+            totalAmount,
+            shippingAddress,
+            paymentMethod
+          }
+        ],
+        {session}
+      );
 
-      const savedOrder = await newOrder.save({session});
-
+      logger.info(`savedOrder=${savedOrder}`);
       // 4. Clear the User's Cart
       await cartModel.findOneAndDelete({user: userId}).session(session);
 
+      logger.info(`deleted`);
       await session.commitTransaction();
+      logger.info(`transaction commited`);
       session.endSession(); // end session before returning
       return savedOrder;
     } catch (error) {

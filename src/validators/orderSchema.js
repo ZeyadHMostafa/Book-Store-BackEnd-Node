@@ -1,5 +1,27 @@
 const Joi = require('joi');
 
+const paymentStatusSchema = Joi.string().valid('pending', 'success', 'failed');
+const paymentMethodSchema = Joi.string().valid('COD', 'Stripe', 'PayPal');
+const statusSchema = Joi.string().valid(
+  'processing',
+  'out for delivery',
+  'delivered',
+  'cancelled'
+);
+
+const orderItemSchema = Joi.object({
+  book: Joi.string()
+    .pattern(/^[0-9a-f]{24}$/i)
+    .required(),
+  quantity: Joi.number().integer().min(1).required()
+});
+
+const addressSchema = Joi.object({
+  street: Joi.string().trim().required(),
+  city: Joi.string().trim().required(),
+  zipCode: Joi.string().trim().required()
+});
+
 const orderSchema = Joi.object({
   user: Joi.string()
     .pattern(/^[0-9a-f]{24}$/i)
@@ -8,18 +30,7 @@ const orderSchema = Joi.object({
     .label('User'),
 
   items: Joi.array()
-    .items(
-      Joi.object({
-        book: Joi.string()
-          .pattern(/^[0-9a-f]{24}$/i)
-          .required()
-          .label('Book ID'),
-        quantity: Joi.number().integer().min(1).required().label('Quantity')
-
-        // TODO: this should likely be calculated not stored!! check with the rest of the team
-        // priceAtPurchase: Joi.number()
-      })
-    )
+    .items(orderItemSchema)
     .min(1)
     .required()
     .label('Order Items'),
@@ -27,44 +38,23 @@ const orderSchema = Joi.object({
   // TODO: this should likely be calculated not stored!! check with the rest of the team
   // totalAmount: Joi.number()
 
-  shippingAddress: Joi.object({
-    street: Joi.string().trim().required().label('Street'),
-    city: Joi.string().trim().required().label('City'),
-    zipCode: Joi.string().trim().required().label('Zip Code')
-  })
-    .required()
-    .label('Shipping Address'),
+  shippingAddress: addressSchema.required().label('Shipping Address'),
 
-  status: Joi.string()
-    .valid('processing', 'out for delivery', 'delivered', 'cancelled')
-    .label('Status'),
+  status: statusSchema.label('Status'),
 
-  paymentStatus: Joi.string()
-    .valid('pending', 'success', 'failed')
-    .label('Payment Status'),
+  paymentStatus: paymentStatusSchema.label('Payment Status'),
 
-  paymentMethod: Joi.string()
-    .valid('COD', 'Stripe', 'PayPal')
-    .label('Payment Method')
+  paymentMethod: paymentMethodSchema.label('Payment Method')
 });
 
-const placeOrderSchema = orderSchema
-  .fork(['user', 'items', 'status', 'paymentStatus'], (schema) => {
-    schema.forbidden();
-  })
-  .keys({
-    shippingAddress: orderSchema.extract('shippingAddress').required(),
-    paymentMethod: orderSchema.extract('paymentMethod').required()
-  });
+const placeOrderSchema = Joi.object({
+  shippingAddress: addressSchema.required(),
+  paymentMethod: paymentMethodSchema.required()
+});
 
-const updateOrderStatusSchema = orderSchema
-  .fork(
-    ['user', 'items', 'totalAmount', 'shippingAddress', 'paymentMethod'],
-    (schema) => schema.forbidden()
-  )
-  .keys({
-    status: orderSchema.extract('status').optional(),
-    paymentStatus: orderSchema.extract('paymentStatus').optional()
-  });
+const updateOrderStatusSchema = Joi.object({
+  status: statusSchema,
+  paymentStatus: paymentStatusSchema
+}).min(1);
 
 module.exports = {orderSchema, placeOrderSchema, updateOrderStatusSchema};
