@@ -18,10 +18,6 @@ const orderSchema = Joi.object({
 
         // TODO: this should likely be calculated not stored!! check with the rest of the team
         // priceAtPurchase: Joi.number()
-        //   .min(0)
-        //   .precision(2)
-        //   .required()
-        //   .label('Price at Purchase')
       })
     )
     .min(1)
@@ -30,10 +26,6 @@ const orderSchema = Joi.object({
 
   // TODO: this should likely be calculated not stored!! check with the rest of the team
   // totalAmount: Joi.number()
-  //   .min(0)
-  //   .precision(2)
-  //   .required()
-  //   .label('Total Amount'),
 
   shippingAddress: Joi.object({
     street: Joi.string().trim().required().label('Street'),
@@ -56,4 +48,23 @@ const orderSchema = Joi.object({
     .label('Payment Method')
 });
 
-module.exports = orderSchema;
+const placeOrderSchema = orderSchema
+  .fork(['user', 'items', 'status', 'paymentStatus'], (schema) => {
+    schema.forbidden();
+  })
+  .keys({
+    shippingAddress: orderSchema.extract('shippingAddress').required(),
+    paymentMethod: orderSchema.extract('paymentMethod').required()
+  });
+
+const updateOrderStatusSchema = orderSchema
+  .fork(
+    ['user', 'items', 'totalAmount', 'shippingAddress', 'paymentMethod'],
+    (schema) => schema.forbidden()
+  )
+  .keys({
+    status: orderSchema.extract('status').optional(),
+    paymentStatus: orderSchema.extract('paymentStatus').optional()
+  });
+
+module.exports = {orderSchema, placeOrderSchema, updateOrderStatusSchema};

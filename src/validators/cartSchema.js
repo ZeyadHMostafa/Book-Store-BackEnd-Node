@@ -23,4 +23,14 @@ const cartSchema = Joi.object({
     .label('Cart Items')
 });
 
-module.exports = cartSchema;
+const addToCartSchema = cartSchema.extract('items').items().keys({
+  user: Joi.forbidden()
+});
+
+const removeFromCartSchema = Joi.object({
+  bookId: Joi.string()
+    .pattern(/^[0-9a-f]{24}$/i)
+    .required()
+});
+
+module.exports = {cartSchema, addToCartSchema, removeFromCartSchema};
