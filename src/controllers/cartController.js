@@ -7,10 +7,26 @@ class CartController extends BaseController {
   }
 
   async getCart(userId) {
-    const cart = await this.model
-      .findOne({user: userId})
-      .populate('items.book');
-    return cart || {user: userId, items: []};
+    const cart = await cartModel.findOne({user: userId}).populate('items.book');
+
+    if (!cart) return {items: [], totalAmount: 0, itemCount: 0};
+
+    // Transform data for the UI
+    const items = cart.items.map((item) => ({
+      book: item.book,
+      quantity: item.quantity,
+      itemTotal: item.book.price * item.quantity
+    }));
+
+    const totalAmount = items.reduce((acc, item) => acc + item.itemTotal, 0);
+    const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+
+    return {
+      id: cart.id,
+      items,
+      totalAmount,
+      itemCount
+    };
   }
 
   async addToCart(userId, bookId, quantity) {
