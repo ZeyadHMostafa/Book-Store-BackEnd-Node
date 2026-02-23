@@ -34,10 +34,16 @@ router
   .route('/my-orders')
   .get(handle((req) => orderController.getMyOrders(req.user.id)));
 
-router.route('/:id').patch(
-  authorize('admin'),
-  validate(updateOrderStatusSchema),
-  handle((req) => orderController.updateStatus(req.params.id, req.body))
-);
+router
+  .route('/:id')
+  .patch(
+    authorize('admin'),
+    validate(updateOrderStatusSchema),
+    handle((req) => orderController.updateStatus(req.params.id, req.body))
+  )
+  .delete(
+    authorize('admin'),
+    handle((req) => orderController.delete(req.params.id))
+  );
 
 module.exports = router;
