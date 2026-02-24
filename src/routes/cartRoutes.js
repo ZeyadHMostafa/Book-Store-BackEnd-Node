@@ -4,7 +4,7 @@ const {authenticate} = require('../services/authService');
 const {validate} = require('../utils/apiError');
 const handle = require('../utils/apiRouteHandler');
 const {
-  addToCartSchema,
+  cartItemSchema,
   removeFromCartSchema
 } = require('../validators/cartSchema');
 
@@ -15,9 +15,9 @@ router
   .route('/')
   .get(handle((req) => cartController.getCart(req.user.id)))
   .post(
-    validate(addToCartSchema),
+    validate(cartItemSchema),
     handle((req) =>
-      cartController.addToCart(req.user.id, req.body.book, req.body.quantity)
+      cartController.upsertToCart(req.user.id, req.body.book, req.body.quantity)
     )
   );
 

@@ -25,6 +25,6 @@ const removeFromCartSchema = Joi.object({
 
 module.exports = {
   cartSchema,
-  addToCartSchema: cartItemSchema,
+  cartItemSchema,
   removeFromCartSchema
 };
