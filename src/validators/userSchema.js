@@ -29,4 +29,12 @@ const loginSchema = userSchema.fork(
   ['firstName', 'lastName', 'dob'],
   (_schema) => Joi.any().strip()
 );
-module.exports = {userSchema, loginSchema};
+
+const updateUserSchema = userSchema
+  .fork(
+    ['email', 'firstName', 'lastName', 'dob', 'password', 'role'],
+    (schema) => schema.optional()
+  )
+  .fork(['password', 'role'], (schema) => schema.strip());
+
+module.exports = {userSchema, loginSchema, updateUserSchema};
