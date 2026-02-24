@@ -13,6 +13,7 @@
       "dependencies": [
         "npm:@antfu/eslint-config@^7.4.3",
         "npm:bcrypt@6",
+        "npm:cloudinary@^2.9.0",
         "npm:cors@^2.8.6",
         "npm:eslint@10",
         "npm:express@^5.2.1",
