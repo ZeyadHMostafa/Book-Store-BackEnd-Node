@@ -25,6 +25,15 @@ class UserController extends BaseController {
     const token = await user.generateToken();
     return {token, message: 'token acquired succesfully'};
   }
+
+  async getProfile(userId) {
+    return await this.getById(userId);
+  }
+
+  async updateProfile(userId, data) {
+    // TODO: does updating with someone else's email cause a problem?
+    return await this.update(userId, data);
+  }
 }
 
 module.exports = new UserController();
