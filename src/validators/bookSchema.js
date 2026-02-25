@@ -23,7 +23,7 @@ const bookSchema = Joi.object({
     .allow('', null)
     .label('Description'),
 
-  bookCover: Joi.string().required().label('Book Cover URL/Path').messages({
+  bookCover: Joi.string().optional().label('Book Cover URL/Path').messages({
     'string.base': 'Must be a valid string path or URI.'
   }),
 
