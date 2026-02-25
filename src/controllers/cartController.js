@@ -6,11 +6,7 @@ class CartController extends BaseController {
     super(cartModel);
   }
 
-  async getCart(userId) {
-    const cart = await cartModel.findOne({user: userId}).populate('items.book');
-
-    if (!cart) return {items: [], totalAmount: 0, itemCount: 0};
-
+  transformCart(cart) {
     // Transform data for the UI
     const items = cart.items.map((item) => ({
       book: item.book,
@@ -29,7 +25,16 @@ class CartController extends BaseController {
     };
   }
 
-  async addToCart(userId, bookId, quantity) {
+  async getCart(userId) {
+    const cart = await cartModel.findOne({user: userId}).populate('items.book');
+
+    if (!cart) return {items: [], totalAmount: 0, itemCount: 0};
+
+    // Transform data for the UI
+    return this.transformCart(cart);
+  }
+
+  async upsertToCart(userId, bookId, quantity) {
     let cart = await this.model.findOne({user: userId});
 
     if (!cart) {
@@ -42,20 +47,28 @@ class CartController extends BaseController {
         (item) => item.book.toString() === bookId
       );
       if (itemIndex > -1) {
-        cart.items[itemIndex].quantity += quantity;
+        cart.items[itemIndex].quantity = quantity;
       } else {
         cart.items.push({book: bookId, quantity});
       }
     }
-    return await cart.save();
+    cart = await (await cart.save()).populate('items.book');
+
+    // Transform data for the UI
+    return this.transformCart(cart);
   }
 
   async removeFromCart(userId, bookId) {
-    return await this.model.findOneAndUpdate(
-      {user: userId},
-      {$pull: {items: {book: bookId}}},
-      {new: true}
-    );
+    const cart = await this.model
+      .findOneAndUpdate(
+        {user: userId},
+        {$pull: {items: {book: bookId}}},
+        {new: true}
+      )
+      .populate('items.book');
+
+    // Transform data for the UI
+    return this.transformCart(cart);
   }
 }
 
