@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-const logger = require('../config/logger');
 const bookmodel = require('../models/book');
 const cartModel = require('../models/cart');
 const orderModel = require('../models/order');
@@ -12,15 +10,12 @@ class OrderController extends BaseController {
   }
 
   async placeOrder(userId, shippingAddress, paymentMethod) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
+    // eslint-disable-next-line no-useless-catch
     try {
-      // 1. Fetch Cart
+    // Fetch Cart
       const cart = await cartModel
         .findOne({user: userId})
-        .populate('items.book')
-        .session(session);
+        .populate('items.book');
       if (!cart || cart.items.length === 0) {
         throw new ApiError(400, 'Your cart is empty.');
       }
@@ -28,17 +23,16 @@ class OrderController extends BaseController {
       let totalAmount = 0;
       const orderItems = [];
 
-      // 2. Validate Stock and Calculate Prices
+      // Validate Stock and Calculate Prices
       for (const item of cart.items) {
         if (item.book.stock < item.quantity) {
           throw new ApiError(400, `Insufficient stock for: ${item.book.title}`);
         }
 
-        // Deduct Stock Atomics
+        // Deduct Stock
         await bookmodel.findByIdAndUpdate(
           item.book._id,
-          {$inc: {stock: -item.quantity}},
-          {session}
+          {$inc: {stock: -item.quantity}}
         );
 
         totalAmount += item.book.price * item.quantity;
@@ -49,31 +43,19 @@ class OrderController extends BaseController {
         });
       }
 
-      const [savedOrder] = await orderModel.create(
-        [
-          {
-            user: userId,
-            items: orderItems,
-            totalAmount,
-            shippingAddress,
-            paymentMethod
-          }
-        ],
-        {session}
-      );
+      const savedOrder = await orderModel.create({
+        user: userId,
+        items: orderItems,
+        totalAmount,
+        shippingAddress,
+        paymentMethod
+      });
 
-      logger.info(`savedOrder=${savedOrder}`);
-      // 4. Clear the User's Cart
-      await cartModel.findOneAndDelete({user: userId}).session(session);
+      // Clear the User's Cart
+      await cartModel.findOneAndDelete({user: userId});
 
-      logger.info(`deleted`);
-      await session.commitTransaction();
-      logger.info(`transaction commited`);
-      session.endSession(); // end session before returning
       return savedOrder;
     } catch (error) {
-      await session.abortTransaction();
-      session.endSession(); // end session before returning even on error
       throw error;
     }
   }
