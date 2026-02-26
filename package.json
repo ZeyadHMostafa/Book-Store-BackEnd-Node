@@ -6,9 +6,6 @@
   "author": "",
   "license": "ISC",
   "main": "index.js",
-  "engines": {
-    "node": "25.x"
-  },
   "scripts": {
     "start": "netlify dev 2>&1 | npx pino-pretty",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,6 +18,7 @@
     "joi": "^18.0.2",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.2.1",
+    "multer": "^2.0.2",
     "pino-http": "^11.0.0",
     "serverless-http": "^4.0.0"
   },

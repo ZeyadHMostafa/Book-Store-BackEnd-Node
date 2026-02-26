@@ -1,13 +1,4 @@
 const mongoose = require('mongoose');
-const cloudinary = require('cloudinary').v2;
-const process = require('node:process');
-const {ApiError} = require('../utils/apiError');
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
-});
 
 const schema = new mongoose.Schema(
   {
@@ -42,34 +33,46 @@ const schema = new mongoose.Schema(
 
 schema.index({name: 1});
 
-schema.pre('save', async function () {
-  if (!this.isModified('bookCover')) return;
-  if (this.bookCover.startsWith('http') || this.bookCover.startsWith('https')) return;
-  try {
-    const uploadResponse = await cloudinary.uploader.upload(this.bookCover, {
-      folder: 'book-store/covers'
-    });
-    this.bookCover = uploadResponse.secure_url;
-  } catch (err) {
-    throw new ApiError(400, `Error uploading image to Cloudinary: ${err.message}`);
-  }
+schema.pre(/^find/, function () {
+  this.populate({path: 'author', select: 'name'}).populate({
+    path: 'category',
+    select: 'name'
+  });
 });
 
-schema.pre('findOneAndUpdate', async function () {
-  const update = this.getUpdate();
-  if (!update.bookCover) return;
-  if (update.bookCover.startsWith('http') || update.bookCover.startsWith('https')) return;
+schema.set('toJSON', {virtuals: true});
+schema.set('toObject', {virtuals: true});
 
-  try {
-    const uploadResponse = await cloudinary.uploader.upload(update.bookCover, {
-      folder: 'book-store/covers'
-    });
-    update.bookCover = uploadResponse.secure_url;
-    this.setUpdate(update);
-  } catch (err) {
-    throw new ApiError(400, `Error uploading image to Cloudinary: ${err.message}`);
-  }
+// Virtual populate for the Review model (keeps reviews in their own collection).
+schema.virtual('reviews', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'book'
 });
+
+schema.statics.recalculateRatingStats = async function (bookId) {
+  const Review = mongoose.model('Review');
+  const stats = await Review.aggregate([
+    {$match: {book: new mongoose.Types.ObjectId(bookId)}},
+    {
+      $group: {
+        _id: '$book',
+        averageRating: {$avg: '$rating'},
+        numReviews: {$sum: 1}
+      }
+    }
+  ]);
+
+  const payload =
+    stats.length === 0 ?
+        {averageRating: 0, numReviews: 0} :
+        {
+          averageRating: stats[0].averageRating,
+          numReviews: stats[0].numReviews
+        };
+
+  return await this.findByIdAndUpdate(bookId, payload, {new: true});
+};
 
 const Entity = mongoose.model('Book', schema);
 module.exports = Entity;

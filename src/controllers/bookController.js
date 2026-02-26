@@ -18,12 +18,24 @@ class BookController extends BaseController {
   }
 
   async create(req) {
+    if (req.file) {
+      const {uploadToCloudinary} = require('../utils/cloudinary');
+      const result = await uploadToCloudinary(req.file.buffer);
+      req.body.bookCover = result.secure_url;
+    }
     return await bookModel.create(req.body);
   }
 
   async update(req) {
     const id = req.params.id;
     if (!id) throw new ApiError(400, 'Book ID is required');
+
+    if (req.file) {
+      const {uploadToCloudinary} = require('../utils/cloudinary');
+      const result = await uploadToCloudinary(req.file.buffer);
+      req.body.bookCover = result.secure_url;
+    }
+
     const book = await bookModel.findByIdAndUpdate(id, req.body, {new: true, runValidators: true});
     if (!book) throw new ApiError(404, 'Book not found');
     return book;
@@ -40,7 +52,10 @@ class BookController extends BaseController {
   async getById(req) {
     const id = req.params.id;
     if (!id) throw new ApiError(400, 'Book ID is required');
-    const book = await bookModel.findById(id);
+    const book = await bookModel.findById(id).populate({
+      path: 'reviews',
+      populate: {path: 'user', select: 'firstName lastName'}
+    });
     if (!book) throw new ApiError(404, 'Book not found');
     return book;
   }
