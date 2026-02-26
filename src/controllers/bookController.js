@@ -52,7 +52,10 @@ class BookController extends BaseController {
   async getById(req) {
     const id = req.params.id;
     if (!id) throw new ApiError(400, 'Book ID is required');
-    const book = await bookModel.findById(id);
+    const book = await bookModel.findById(id).populate({
+      path: 'reviews',
+      populate: {path: 'user', select: 'firstName lastName'}
+    });
     if (!book) throw new ApiError(404, 'Book not found');
     return book;
   }
