@@ -4,6 +4,7 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["express"]
+  included_files = ["swagger-output.json"]
 
 [dev]
   port = 8888
