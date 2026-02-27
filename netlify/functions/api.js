@@ -5,7 +5,7 @@ const serverless = require('serverless-http');
 
 const corsConfig = require('../../src/config/cors');
 const db = require('../../src/config/db');
-const logger = require('../../src/config/logger');
+const {logger, serializers} = require('../../src/config/logger');
 const router = require('../../src/routes');
 const errorHandler = require('../../src/utils/errorHandler');
 
@@ -13,7 +13,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors(corsConfig));
-app.use(pinoHttp({logger}));
+app.use(pinoHttp({logger, serializers}));
 
 app.use(async (req, res, next) => {
   await db.start();
