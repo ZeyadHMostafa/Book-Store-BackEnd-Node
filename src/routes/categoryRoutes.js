@@ -8,6 +8,8 @@ const categorySchema = require('../validators/categorySchema');
 
 const router = express.Router();
 
+router.route('/count').get(handle((req) => categoryController.count(req)));
+
 router
   .route('/')
   .get(handle((req) => categoryController.getAll(req)))

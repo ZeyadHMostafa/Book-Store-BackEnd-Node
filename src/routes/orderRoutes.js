@@ -10,12 +10,18 @@ const {
 
 const router = express.Router();
 
+router.route('/count').get(
+  authenticate,
+  authorize('admin'),
+  handle((req) => orderController.count(req))
+);
+
 router.use(authenticate);
 router
   .route('/')
   .get(
     authorize('admin'),
-    handle(() => orderController.getAllOrders())
+    handle((req) => orderController.getAllOrders(req))
   )
   .post(
     validate(placeOrderSchema),
@@ -32,7 +38,7 @@ router
 
 router
   .route('/my-orders')
-  .get(handle((req) => orderController.getMyOrders(req.user.id)));
+  .get(handle((req) => orderController.getMyOrders(req)));
 
 router
   .route('/:id')

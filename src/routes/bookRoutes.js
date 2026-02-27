@@ -9,6 +9,8 @@ const {bookSchema, bookUpdateSchema} = require('../validators/bookSchema');
 
 const router = express.Router();
 
+router.route('/count').get(handle((req) => bookController.count(req)));
+
 router
   .route('/')
   .get(handle((req) => bookController.getAll(req)))

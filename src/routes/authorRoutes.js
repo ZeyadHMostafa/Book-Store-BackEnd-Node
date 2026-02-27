@@ -8,6 +8,8 @@ const authorSchema = require('../validators/authorSchema');
 
 const router = express.Router();
 
+router.route('/count').get(handle((req) => authorController.count(req)));
+
 router
   .route('/')
   .get(handle((req) => authorController.getAll(req)))
