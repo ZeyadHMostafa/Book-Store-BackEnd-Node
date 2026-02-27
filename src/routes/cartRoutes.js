@@ -11,19 +11,43 @@ const {
 const router = express.Router();
 
 router.use(authenticate);
+
 router
   .route('/')
-  .get(handle((req) => cartController.getCart(req.user.id)))
+  .get(
+    handle((req) => {
+      // #swagger.tags = ['Cart']
+      // #swagger.summary = 'Get current user cart'
+      // #swagger.security = [{ "bearerAuth": [] }]
+      return cartController.getCart(req.user.id);
+    })
+  )
   .post(
     validate(cartItemSchema),
-    handle((req) =>
-      cartController.upsertToCart(req.user.id, req.body.book, req.body.quantity)
-    )
+    handle((req) => {
+      // #swagger.tags = ['Cart']
+      // #swagger.summary = 'Add/Update item in cart'
+      // #swagger.security = [{ "bearerAuth": [] }]
+      /* #swagger.requestBody = {
+            required: true,
+            content: { "application/json": { schema: { $ref: "#/definitions/cartItemSchema" } } }
+      } */
+      return cartController.upsertToCart(
+        req.user.id,
+        req.body.book,
+        req.body.quantity
+      );
+    })
   );
 
 router.route('/:bookId').delete(
   validate(null, removeFromCartSchema),
-  handle((req) => cartController.removeFromCart(req.user.id, req.params.bookId))
+  handle((req) => {
+    // #swagger.tags = ['Cart']
+    // #swagger.summary = 'Remove item from cart'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    return cartController.removeFromCart(req.user.id, req.params.bookId);
+  })
 );
 
 module.exports = router;

@@ -10,46 +10,80 @@ const {
 
 const router = express.Router();
 
+router.use(authenticate);
+
 router.route('/count').get(
-  authenticate,
   authorize('admin'),
-  handle((req) => orderController.count(req))
+  handle((req) => {
+    // #swagger.tags = ['Orders']
+    // #swagger.summary = 'Count all orders (Admin)'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    return orderController.count(req);
+  })
 );
 
-router.use(authenticate);
 router
   .route('/')
   .get(
     authorize('admin'),
-    handle((req) => orderController.getAllOrders(req))
+    handle((req) => {
+      // #swagger.tags = ['Orders']
+      // #swagger.summary = 'Get all orders (Admin)'
+      // #swagger.security = [{ "bearerAuth": [] }]
+      return orderController.getAllOrders(req);
+    })
   )
   .post(
     validate(placeOrderSchema),
-    handle(
-      (req) =>
-        orderController.placeOrder(
-          req.user.id,
-          req.body.shippingAddress,
-          req.body.paymentMethod
-        ),
-      201
-    )
+    handle((req) => {
+      // #swagger.tags = ['Orders']
+      // #swagger.summary = 'Place a new order'
+      // #swagger.security = [{ "bearerAuth": [] }]
+      /* #swagger.requestBody = {
+            required: true,
+            content: { "application/json": { schema: { $ref: "#/definitions/placeOrderSchema" } } }
+        } */
+      return orderController.placeOrder(
+        req.user.id,
+        req.body.shippingAddress,
+        req.body.paymentMethod
+      );
+    }, 201)
   );
 
-router
-  .route('/my-orders')
-  .get(handle((req) => orderController.getMyOrders(req)));
+router.route('/my-orders').get(
+  handle((req) => {
+    // #swagger.tags = ['Orders']
+    // #swagger.summary = 'Get logged-in user orders'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    return orderController.getMyOrders(req);
+  })
+);
 
 router
   .route('/:id')
   .patch(
     authorize('admin'),
     validate(updateOrderStatusSchema),
-    handle((req) => orderController.updateStatus(req.params.id, req.body))
+    handle((req) => {
+      // #swagger.tags = ['Orders']
+      // #swagger.summary = 'Update order status (Admin)'
+      // #swagger.security = [{ "bearerAuth": [] }]
+      /* #swagger.requestBody = {
+            required: true,
+            content: { "application/json": { schema: { $ref: "#/definitions/updateOrderStatusSchema" } } }
+      } */
+      return orderController.updateStatus(req.params.id, req.body);
+    })
   )
   .delete(
     authorize('admin'),
-    handle((req) => orderController.delete(req.params.id))
+    handle((req) => {
+      // #swagger.tags = ['Orders']
+      // #swagger.summary = 'Delete an order (Admin)'
+      // #swagger.security = [{ "bearerAuth": [] }]
+      return orderController.delete(req.params.id);
+    })
   );
 
 module.exports = router;
