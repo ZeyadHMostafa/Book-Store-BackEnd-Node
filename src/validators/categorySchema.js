@@ -5,7 +5,7 @@ const categorySchema = Joi.object({
 
   description: Joi.string()
     .trim()
-    .max(1000)
+    .max(10000)
     .allow('', null)
     .label('Description')
 });

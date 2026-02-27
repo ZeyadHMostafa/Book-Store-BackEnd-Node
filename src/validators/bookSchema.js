@@ -19,7 +19,7 @@ const bookSchema = Joi.object({
 
   description: Joi.string()
     .trim()
-    .max(2000)
+    .max(10000)
     .allow('', null)
     .label('Description'),
 

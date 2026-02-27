@@ -2,7 +2,13 @@ const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema(
   {
-    name: {type: String, required: true, trim: true},
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: 1,
+      maxLength: 100
+    },
 
     author: {
       type: mongoose.Schema.Types.ObjectId,
@@ -16,17 +22,17 @@ const schema = new mongoose.Schema(
       required: true
     },
 
-    price: {type: Number, required: true, min: 0},
+    price: {type: Number, required: true, min: 0, max: 1000000000},
 
-    description: {type: String},
+    description: {type: String, required: true, minLength: 5, maxLength: 10000},
 
     bookCover: {type: String, required: true},
 
     stock: {type: Number, default: 1},
 
-    averageRating: {type: Number, default: 0},
+    averageRating: {type: Number, default: 0, min: 0, max: 5},
 
-    numReviews: {type: Number, default: 0}
+    numReviews: {type: Number, default: 0, min: 0}
   },
   {timestamps: true}
 );
@@ -64,9 +70,9 @@ schema.statics.recalculateRatingStats = async function (bookId) {
   ]);
 
   const payload =
-    stats.length === 0 ?
-        {averageRating: 0, numReviews: 0} :
-        {
+    stats.length === 0
+      ? {averageRating: 0, numReviews: 0}
+      : {
           averageRating: stats[0].averageRating,
           numReviews: stats[0].numReviews
         };

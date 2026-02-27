@@ -13,13 +13,26 @@ const schema = mongoose.Schema(
       lowercase: true
     },
 
-    firstName: {type: String, required: true, trim: true},
+    firstName: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: 1,
+      maxLength: 100
+    },
 
-    lastName: {type: String, required: true, trim: true},
+    lastName: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: 1,
+      maxLength: 100
+    },
 
     dob: {type: Date, required: true},
 
-    password: {type: String, required: true, minlength: 8, select: false},
+    // Note: this is technically the hash not the password
+    password: {type: String, required: true, select: false},
 
     role: {type: String, enum: ['user', 'admin'], default: 'user'}
   },

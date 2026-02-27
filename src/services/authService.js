@@ -5,7 +5,8 @@ const {ApiError} = require('../utils/apiError');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const generateToken = async (id, role) => {
-  return await jwt.sign({id, role}, JWT_SECRET, {expiresIn: '1h'});
+  // TODO: add refresh tokens for better securty and long-term auth
+  return await jwt.sign({id, role}, JWT_SECRET, {expiresIn: '6h'});
 };
 
 const authenticate = async (req, res, next) => {
