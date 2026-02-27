@@ -4,6 +4,7 @@ const bookmodel = require('../models/book');
 const cartModel = require('../models/cart');
 const orderModel = require('../models/order');
 const {ApiError} = require('../utils/apiError');
+const APIFeatures = require('../utils/apiFeatures');
 const BaseController = require('../utils/baseController');
 
 class OrderController extends BaseController {
@@ -78,24 +79,42 @@ class OrderController extends BaseController {
     }
   }
 
-  // TODO: populate select doesn't have effect due to pre populate
-  // we should likely only populate when we need to rather than use pre
-  async getMyOrders(userId) {
-    return await orderModel
-      .find({user: userId})
-      .populate({
-        path: 'items.book',
-        select: 'name price',
-        autopopulate: false
-      })
-      .sort({createdAt: -1});
+  async getMyOrders(req) {
+    const features = new APIFeatures(
+      orderModel.find({user: req.user.id}),
+      req.query
+    )
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const orders = await features.query.populate({
+      path: 'items.book',
+      select: 'name price',
+      autopopulate: false
+    });
+
+    const countFeatures = new APIFeatures(
+      orderModel.find({user: req.user.id}),
+      req.query
+    ).filter();
+    const totalItems = await countFeatures.query.countDocuments();
+
+    return {
+      data: orders,
+      totalItems
+    };
   }
 
-  async getAllOrders() {
-    return await orderModel
-      .find()
-      .populate('user', 'name email')
-      .sort({createdAt: -1});
+  async getAllOrders(req) {
+    const features = new APIFeatures(orderModel.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    return await features.query.populate('user', 'name email');
   }
 
   async updateStatus(orderId, updateData) {
