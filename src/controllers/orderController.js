@@ -78,8 +78,17 @@ class OrderController extends BaseController {
     }
   }
 
+  // TODO: populate select doesn't have effect due to pre populate
+  // we should likely only populate when we need to rather than use pre
   async getMyOrders(userId) {
-    return await orderModel.find({user: userId}).sort({createdAt: -1});
+    return await orderModel
+      .find({user: userId})
+      .populate({
+        path: 'items.book',
+        select: 'name price',
+        autopopulate: false
+      })
+      .sort({createdAt: -1});
   }
 
   async getAllOrders() {
