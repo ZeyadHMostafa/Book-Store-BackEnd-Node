@@ -20,7 +20,8 @@
     "mongoose": "^9.2.1",
     "multer": "^2.0.2",
     "pino-http": "^11.0.0",
-    "serverless-http": "^4.0.0"
+    "serverless-http": "^4.0.0",
+    "stripe": "^20.4.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^7.4.3",
