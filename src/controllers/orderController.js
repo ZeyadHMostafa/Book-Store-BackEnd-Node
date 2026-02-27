@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const logger = require('../config/logger');
+const {logger} = require('../config/logger');
 const bookmodel = require('../models/book');
 const cartModel = require('../models/cart');
 const orderModel = require('../models/order');
@@ -102,7 +102,7 @@ class OrderController extends BaseController {
     const totalItems = await countFeatures.query.countDocuments();
 
     return {
-      data: orders,
+      orders,
       totalItems
     };
   }
@@ -114,7 +114,13 @@ class OrderController extends BaseController {
       .limitFields()
       .paginate();
 
-    return await features.query.populate('user', 'name email');
+    const orders = await features.query.populate('user', 'name email');
+    const totalItems = await orderModel.countDocuments(); // Simplest count for all orders
+
+    return {
+      orders,
+      totalItems
+    };
   }
 
   async updateStatus(orderId, updateData) {

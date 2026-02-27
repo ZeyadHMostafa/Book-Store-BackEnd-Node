@@ -1,4 +1,4 @@
-const logger = require('../config/logger');
+const {logger} = require('../config/logger');
 
 const handle = (controllerAction, status = 200) => {
   return async (req, res, next) => {

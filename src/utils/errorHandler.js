@@ -1,5 +1,5 @@
 const process = require('node:process');
-const logger = require('../config/logger');
+const {logger} = require('../config/logger');
 const {ApiError} = require('./apiError');
 
 const handleCastErrorDB = (err) => {

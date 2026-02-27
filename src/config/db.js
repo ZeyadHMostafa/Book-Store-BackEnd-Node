@@ -1,6 +1,6 @@
 const process = require('node:process');
 const mongoose = require('mongoose');
-const logger = require('./logger');
+const {logger} = require('./logger');
 
 const DB_URL = process.env.MONGODB_CONNECTION_STRING;
 

@@ -7,7 +7,7 @@
   "license": "ISC",
   "main": "index.js",
   "scripts": {
-    "start": "netlify dev 2>&1 | npx pino-pretty",
+    "start": "netlify dev 2>&1 | pino-pretty -c -l",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

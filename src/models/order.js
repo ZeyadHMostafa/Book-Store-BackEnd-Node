@@ -46,7 +46,11 @@ const schema = new mongoose.Schema(
       default: 'COD'
     }
   },
-  {timestamps: true}
+  {
+    timestamps: true,
+    toJSON: {virtuals: true},
+    toObject: {virtuals: true}
+  }
 );
 
 schema.index({user: 1, createdAt: -1});
