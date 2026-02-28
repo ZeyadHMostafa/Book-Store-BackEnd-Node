@@ -55,7 +55,7 @@ const doc = {
   '@definitions': definitions
 };
 
-const outputFile = './swagger-output.json';
-const endpointsFiles = ['./src/routes/index.js'];
+const outputFile = '../docs/swagger-output.json';
+const endpointsFiles = ['../src/routes/index.js'];
 
 swaggerAutogen(outputFile, endpointsFiles, doc);
