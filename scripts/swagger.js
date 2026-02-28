@@ -40,7 +40,7 @@ const doc = {
     title: 'Book-Store Backend API',
     description: 'Documentation for our Express/MongoDB backend'
   },
-  'host': 'api-doc-host',
+  'host': '127.0.0.1:8888/api',
   'schemes': ['http'],
   // Add this section:
   'components': {
