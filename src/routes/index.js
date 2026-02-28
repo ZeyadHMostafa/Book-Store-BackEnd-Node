@@ -24,5 +24,6 @@ route.use('/order', require('./orderRoutes'));
 route.use('/booking', require('./bookingRoutes'));
 route.use('/review', require('./reviewRoutes'));
 route.use('/user', require('./userRoutes'));
+route.use('/auth', require('./authRoutes'));
 
 module.exports = route;

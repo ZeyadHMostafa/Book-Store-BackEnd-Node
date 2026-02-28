@@ -34,7 +34,12 @@ const schema = mongoose.Schema(
     // Note: this is technically the hash not the password
     password: {type: String, required: true, select: false},
 
-    role: {type: String, enum: ['user', 'admin'], default: 'user'}
+    role: {type: String, enum: ['user', 'admin'], default: 'user'},
+
+    passwordResetCode: String,
+    passwordResetExpires: Date,
+    passwordResetVerified: Boolean
+
   },
   {timestamps: true}
 );

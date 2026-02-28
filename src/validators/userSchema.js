@@ -37,4 +37,24 @@ const updateUserSchema = userSchema
   )
   .fork(['password', 'role'], (schema) => schema.strip());
 
-module.exports = {userSchema, loginSchema, updateUserSchema};
+const forgotPasswordSchema = Joi.object({
+  email: Joi.string().email().required().label('Email')
+});
+
+const verifyResetCodeSchema = Joi.object({
+  resetCode: Joi.string().length(6).required().label('Reset Code')
+});
+
+const updatePasswordSchema = Joi.object({
+  resetCode: Joi.string().length(6).required().label('Reset Code'),
+  password: Joi.string().min(8).required().label('New Password')
+});
+
+module.exports = {
+  userSchema,
+  loginSchema,
+  updateUserSchema,
+  verifyResetCodeSchema,
+  updatePasswordSchema,
+  forgotPasswordSchema
+};
