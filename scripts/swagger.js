@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const j2s = require('joi-to-swagger');
 
-const validatorDir = path.join(__dirname, './src/validators');
+const validatorDir = path.join(__dirname, '../src/validators');
 const definitions = {};
 
 // 1. Read all files in the validator directory
