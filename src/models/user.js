@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 
 const mongoose = require('mongoose');
+const {generateToken} = require('../services/authService');
 
 const schema = mongoose.Schema(
   {
@@ -12,15 +13,33 @@ const schema = mongoose.Schema(
       lowercase: true
     },
 
-    firstName: {type: String, required: true, trim: true},
+    firstName: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: 1,
+      maxLength: 100
+    },
 
-    lastName: {type: String, required: true, trim: true},
+    lastName: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: 1,
+      maxLength: 100
+    },
 
     dob: {type: Date, required: true},
 
-    password: {type: String, required: true, minlength: 8, select: false},
+    // Note: this is technically the hash not the password
+    password: {type: String, required: true, select: false},
 
-    role: {type: String, enum: ['user', 'admin'], default: 'user'}
+    role: {type: String, enum: ['user', 'admin'], default: 'user'},
+
+    passwordResetCode: String,
+    passwordResetExpires: Date,
+    passwordResetVerified: Boolean
+
   },
   {timestamps: true}
 );
@@ -33,11 +52,13 @@ schema.pre('save', async function () {
 });
 
 // Instance method to check password
-schema.methods.correctPassword = async function (
-  candidatePassword,
-  userPassword
-) {
-  return await bcrypt.compare(candidatePassword, userPassword);
+schema.methods.correctPassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+// Instance method to generate JWT token
+schema.methods.generateToken = async function () {
+  return await generateToken(this._id, this.role);
 };
 
 const Entity = mongoose.model('User', schema);

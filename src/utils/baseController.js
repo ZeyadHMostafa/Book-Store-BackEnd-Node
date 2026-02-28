@@ -9,6 +9,10 @@ class BaseController {
     return await this.model.find(query);
   }
 
+  async count(req) {
+    return await this.model.countDocuments(req.query);
+  }
+
   async getById(id) {
     const doc = await this.model.findById(id);
     if (!doc) throw new ApiError(404, 'Resource not found');

@@ -21,7 +21,40 @@ const userSchema = Joi.object({
     // TODO: add regex
     .label('Password'),
 
-  role: Joi.string().valid('user', 'admin').default('user').label('Role')
+  // Todo, have a specific function that updates role only
+  role: Joi.string().valid('user', 'admin').label('Role')
 });
 
-module.exports = userSchema;
+const loginSchema = userSchema.fork(
+  ['firstName', 'lastName', 'dob'],
+  (_schema) => Joi.any().strip()
+);
+
+const updateUserSchema = userSchema
+  .fork(
+    ['email', 'firstName', 'lastName', 'dob', 'password', 'role'],
+    (schema) => schema.optional()
+  )
+  .fork(['password', 'role'], (schema) => schema.strip());
+
+const forgotPasswordSchema = Joi.object({
+  email: Joi.string().email().required().label('Email')
+});
+
+const verifyResetCodeSchema = Joi.object({
+  resetCode: Joi.string().length(6).required().label('Reset Code')
+});
+
+const updatePasswordSchema = Joi.object({
+  resetCode: Joi.string().length(6).required().label('Reset Code'),
+  password: Joi.string().min(8).required().label('New Password')
+});
+
+module.exports = {
+  userSchema,
+  loginSchema,
+  updateUserSchema,
+  verifyResetCodeSchema,
+  updatePasswordSchema,
+  forgotPasswordSchema
+};

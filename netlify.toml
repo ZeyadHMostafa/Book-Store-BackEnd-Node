@@ -4,6 +4,7 @@
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["express"]
+  included_files = ["docs/swagger-output.json"]
 
 [dev]
   port = 8888
@@ -15,3 +16,7 @@
   to = "/.netlify/functions/api/:splat"
   status = 200
   force = true
+  [redirects.rate_limit]
+    window_limit = 10
+    window_size = 60
+    aggregate_by = [ "ip", "domain"]

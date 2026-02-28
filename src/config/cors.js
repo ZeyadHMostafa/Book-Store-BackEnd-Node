@@ -1,7 +1,9 @@
 const process = require('node:process');
 const {ApiError} = require('../utils/apiError');
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || undefined;
+const allowedOrigins =
+  process.env.ALLOWED_ORIGINS?.split(',').map((origin) => origin.trim()) ||
+  undefined;
 
 const corsConfig = {
   origin(origin, callback) {

@@ -1,27 +1,53 @@
 const express = require('express');
-
 const cartController = require('../controllers/cartController');
+const {authenticate} = require('../services/authService');
 const {validate} = require('../utils/apiError');
 const handle = require('../utils/apiRouteHandler');
-const cartSchema = require('../validators/cartSchema');
+const {
+  cartItemSchema,
+  removeFromCartSchema
+} = require('../validators/cartSchema');
 
 const router = express.Router();
 
-router
-  .route('/')
-  .get(handle(() => cartController.getAll()))
-  .post(
-    validate(cartSchema),
-    handle((req) => cartController.create(req.body))
-  );
+router.use(authenticate);
 
 router
-  .route('/:id')
-  .get(handle((req) => cartController.getById(req.params.id)))
-  .patch(
-    validate(cartSchema),
-    handle((req) => cartController.update(req.params.id, req.body))
+  .route('/')
+  .get(
+    handle((req) => {
+      // #swagger.tags = ['Cart']
+      // #swagger.summary = 'Get current user cart'
+      // #swagger.security = [{ "bearerAuth": [] }]
+      return cartController.getCart(req.user.id);
+    })
   )
-  .delete(handle((req) => cartController.delete(req.params.id)));
+  .post(
+    validate(cartItemSchema),
+    handle((req) => {
+      // #swagger.tags = ['Cart']
+      // #swagger.summary = 'Add/Update item in cart'
+      // #swagger.security = [{ "bearerAuth": [] }]
+      /* #swagger.requestBody = {
+            required: true,
+            content: { "application/json": { schema: { $ref: "#/definitions/cartItemSchema" } } }
+      } */
+      return cartController.upsertToCart(
+        req.user.id,
+        req.body.book,
+        req.body.quantity
+      );
+    })
+  );
+
+router.route('/:bookId').delete(
+  validate(null, removeFromCartSchema),
+  handle((req) => {
+    // #swagger.tags = ['Cart']
+    // #swagger.summary = 'Remove item from cart'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    return cartController.removeFromCart(req.user.id, req.params.bookId);
+  })
+);
 
 module.exports = router;

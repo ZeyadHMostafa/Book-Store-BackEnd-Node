@@ -1,5 +1,18 @@
 const mongoose = require('mongoose');
 
+const orderItemSchema = mongoose.Schema(
+  {
+    book: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Book',
+      required: true
+    },
+    quantity: {type: Number, required: true},
+    priceAtPurchase: {type: Number, required: true}
+  },
+  {_id: false, label: 'OrderItem'}
+);
+
 const schema = new mongoose.Schema(
   {
     user: {
@@ -8,25 +21,13 @@ const schema = new mongoose.Schema(
       required: true
     },
 
-    items: [
-      {
-        book: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Book',
-          required: true
-        },
-        quantity: {type: Number, required: true},
-        priceAtPurchase: {type: Number, required: true}
-      }
-    ],
+    phone: {type: String, required: true},
+
+    shippingAddress: {type: String, required: true},
+
+    items: [orderItemSchema],
 
     totalAmount: {type: Number, required: true},
-
-    shippingAddress: {
-      street: {type: String, required: true},
-      city: {type: String, required: true},
-      zipCode: {type: String, required: true}
-    },
 
     status: {
       type: String,
@@ -46,10 +47,17 @@ const schema = new mongoose.Schema(
       default: 'COD'
     }
   },
-  {timestamps: true}
+  {
+    timestamps: true,
+    toJSON: {virtuals: true},
+    toObject: {virtuals: true}
+  }
 );
 
 schema.index({user: 1, createdAt: -1});
+
+// important for erd generation
+mongoose.model('OrderItemSchema', orderItemSchema);
 
 const Order = mongoose.model('Order', schema);
 module.exports = Order;

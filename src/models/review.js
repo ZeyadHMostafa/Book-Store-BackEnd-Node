@@ -17,7 +17,7 @@ const schema = new mongoose.Schema(
     rating: {
       type: Number,
       required: true,
-      min: 1,
+      min: 0,
       max: 5
     },
 
@@ -30,6 +30,28 @@ const schema = new mongoose.Schema(
 );
 
 schema.index({book: 1, user: 1}, {unique: true});
+
+schema.statics.updateRatings = async function (bookId) {
+  await mongoose.model('Book').recalculateRatingStats(bookId);
+};
+
+schema.post('save', async function () {
+  await this.constructor.updateRatings(this.book);
+});
+
+schema.pre(/^findOneAnd/, async function () {
+  this.r = await this.clone().findOne();
+});
+
+schema.post(/^findOneAnd/, async function () {
+  if (this.r) {
+    await this.r.constructor.updateRatings(this.r.book);
+  }
+});
+
+schema.post('remove', async function () {
+  await this.constructor.updateRatings(this.book);
+});
 
 const Review = mongoose.model('Review', schema);
 module.exports = Review;

@@ -1,35 +1,46 @@
 const process = require('node:process');
 const jwt = require('jsonwebtoken');
+const {ApiError} = require('../utils/apiError');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const generateToken = async (id) => {
-  return await jwt.sign({id}, JWT_SECRET, {expiresIn: '1h'});
+const generateToken = async (id, role) => {
+  // TODO: add refresh tokens for better securty and long-term auth
+  return await jwt.sign({id, role}, JWT_SECRET, {expiresIn: '6h'});
 };
 
 const authenticate = async (req, res, next) => {
-  const token = req.headers.authorization;
+  const authHeader = req.headers.authorization;
 
-  if (!token) {
-    return res.status(401).json({error: 'No user token provided'});
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    throw new ApiError(401, 'No valid token provided. Please log in.');
   }
 
-  const decoded = jwt.verify(token, JWT_SECRET);
+  const token = authHeader.split(' ')[1];
 
-  if (!decoded) {
-    return res.status(401).json({error: 'failed to acquire token'});
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = {id: decoded.id, role: decoded.role};
+    next();
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      throw new ApiError(401, 'Your session has expired. Please log in again.');
+    }
+    throw new ApiError(401, 'Invalid token authentication failed.');
   }
-
-  req.user = decoded;
-  next();
 };
 
-const authorize = async (req, res, next) => {
-  if (req.user.id === req.params.id) {
-    return next();
-  }
+const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      throw new ApiError(401, 'Authentication required.');
+    }
 
-  return res.status(401).json({error: 'Incorrect user token'});
+    if (roles.length && !roles.includes(req.user.role)) {
+      throw new ApiError(403, 'Access denied. Insufficient permissions.');
+    }
+
+    next();
+  };
 };
-
 module.exports = {authenticate, authorize, generateToken};
