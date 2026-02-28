@@ -7,7 +7,13 @@ const allowedOrigins =
 
 const corsConfig = {
   origin(origin, callback) {
-    if (!allowedOrigins || allowedOrigins.includes(origin) || !origin) {
+    if (
+      !allowedOrigins ||
+      allowedOrigins.length === 0 ||
+      (allowedOrigins.length === 1 && allowedOrigins[0] === '') ||
+      allowedOrigins.includes(origin) ||
+      !origin
+    ) {
       callback(null, true);
     } else {
       callback(new ApiError(401, 'Not Allowed by CORS'));
