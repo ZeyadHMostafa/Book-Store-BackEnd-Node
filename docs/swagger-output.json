@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://api-doc-host/"
+      "url": "http://127.0.0.1:8888/api/"
     }
   ],
   "paths": {

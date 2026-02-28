@@ -12,7 +12,7 @@ const handleDuplicateFieldsDB = (err) => {
     err.errorResponse?.errmsg?.match(/(["'])(\\?.)*?\1/)?.[0] ||
     Object.values(err.keyValue)[0];
   const key = Object.keys(err.keyValue)[0] || '';
-  const message = `${key} "${value}" is already taken. Please use another value!`;
+  const message = `${key} ${value} is already taken. Please use another value!`;
   return new ApiError(400, message);
 };
 
