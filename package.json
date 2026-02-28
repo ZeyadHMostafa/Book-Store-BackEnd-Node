@@ -7,6 +7,7 @@
   "license": "ISC",
   "main": "index.js",
   "scripts": {
+    "swagger": "node swagger.js",
     "start": "netlify dev 2>&1 | pino-pretty -c -l",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,12 +17,16 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "joi": "^18.0.2",
+    "joi-to-swagger": "^6.2.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.2.1",
+    "mongoose-to-swagger": "^1.5.1",
     "multer": "^2.0.2",
     "pino-http": "^11.0.0",
     "serverless-http": "^4.0.0",
-    "stripe": "^20.4.0"
+    "stripe": "^20.4.0",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^7.4.3",
