@@ -7,7 +7,8 @@
   "license": "ISC",
   "main": "index.js",
   "scripts": {
-    "swagger": "node swagger.js",
+    "swagger": "node scripts/swagger.js",
+    "mermaid": "node scripts/mermaid-erd-generator.js",
     "start": "netlify dev 2>&1 | pino-pretty -c -l",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,10 +19,8 @@
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "joi": "^18.0.2",
-    "joi-to-swagger": "^6.2.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.2.1",
-    "mongoose-to-swagger": "^1.5.1",
     "multer": "^2.0.2",
     "nodemailer": "^8.0.1",
     "pino-http": "^11.0.0",
@@ -31,6 +30,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "joi-to-swagger": "^6.2.0",
     "@antfu/eslint-config": "^7.4.3",
     "eslint": "^10.0.0",
     "pino-pretty": "^13.1.3"

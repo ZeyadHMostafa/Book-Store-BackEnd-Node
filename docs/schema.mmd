@@ -1,0 +1,77 @@
+erDiagram
+    BOOK }o--|| AUTHOR : "refs"
+    BOOK }o--|| CATEGORY : "refs"
+    CARTITEMSCHEMA }o--|| BOOK : "refs"
+    CART ||--|| USER : "refs"
+    CART ||--o{ CARTITEMSCHEMA : "contains"
+    ORDERITEMSCHEMA }o--|| BOOK : "refs"
+    ORDER }o--|| USER : "refs"
+    ORDER ||--o{ ORDERITEMSCHEMA : "contains"
+    REVIEW }o--|| BOOK : "refs"
+    REVIEW }o--|| USER : "refs"
+    AUTHOR {
+        String name
+        String bio
+        ObjectId id
+    }
+    BOOK {
+        String name
+        ObjectId author
+        ObjectId category
+        Number price
+        String description
+        String bookCover
+        Number stock
+        Number averageRating
+        Number numReviews
+        ObjectId id
+    }
+    CARTITEMSCHEMA {
+        ObjectId book
+        Number quantity
+    }
+    CART {
+        ObjectId user
+        Array items
+        ObjectId id
+    }
+    CATEGORY {
+        String name
+        String description
+        ObjectId id
+    }
+    ORDERITEMSCHEMA {
+        ObjectId book
+        Number quantity
+        Number priceAtPurchase
+    }
+    ORDER {
+        ObjectId user
+        String phone
+        String shippingAddress
+        Array items
+        Number totalAmount
+        String status
+        String paymentStatus
+        String paymentMethod
+        ObjectId id
+    }
+    REVIEW {
+        ObjectId book
+        ObjectId user
+        Number rating
+        String comment
+        ObjectId id
+    }
+    USER {
+        String email
+        String firstName
+        String lastName
+        Date dob
+        String password
+        String role
+        String passwordResetCode
+        Date passwordResetExpires
+        Boolean passwordResetVerified
+        ObjectId id
+    }
