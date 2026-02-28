@@ -16,11 +16,9 @@ const orderItemSchema = Joi.object({
   quantity: Joi.number().integer().min(1).required()
 });
 
-const addressSchema = Joi.object({
-  street: Joi.string().trim().required(),
-  city: Joi.string().trim().required(),
-  zipCode: Joi.string().trim().required()
-});
+const phoneSchema = Joi.string().trim().required();
+
+const addressSchema = Joi.string().trim().required();
 
 const orderSchema = Joi.object({
   user: Joi.string()
@@ -38,6 +36,8 @@ const orderSchema = Joi.object({
   // TODO: this should likely be calculated not stored!! check with the rest of the team
   // totalAmount: Joi.number()
 
+  phone: phoneSchema.required().label('Phone'),
+
   shippingAddress: addressSchema.required().label('Shipping Address'),
 
   status: statusSchema.label('Status'),
@@ -48,6 +48,7 @@ const orderSchema = Joi.object({
 });
 
 const placeOrderSchema = Joi.object({
+  phone: phoneSchema.required(),
   shippingAddress: addressSchema.required(),
   paymentMethod: paymentMethodSchema.required()
 });

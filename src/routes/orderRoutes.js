@@ -46,6 +46,7 @@ router
       return orderController.placeOrder(
         req.user.id,
         req.body.shippingAddress,
+        req.body.phone,
         req.body.paymentMethod
       );
     }, 201)

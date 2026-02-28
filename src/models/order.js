@@ -8,6 +8,10 @@ const schema = new mongoose.Schema(
       required: true
     },
 
+    phone: {type: String, required: true},
+
+    shippingAddress: {type: String, required: true},
+
     items: [
       {
         book: {
@@ -21,12 +25,6 @@ const schema = new mongoose.Schema(
     ],
 
     totalAmount: {type: Number, required: true},
-
-    shippingAddress: {
-      street: {type: String, required: true},
-      city: {type: String, required: true},
-      zipCode: {type: String, required: true}
-    },
 
     status: {
       type: String,
