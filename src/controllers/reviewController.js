@@ -8,8 +8,16 @@ class ReviewController extends BaseController {
   }
 
   async create(req) {
-    const review = await this.model.create(req.body);
-    return await this.model.findById(review._id).populate('user', 'firstName lastName');
+    const review = await this.model.create(req.body).catch((err) => {
+      if (err.code === 11000) {
+        throw new ApiError(400, `Only one review allowed per customer`);
+      }
+
+      throw err;
+    });
+    return await this.model
+      .findById(review._id)
+      .populate('user', 'firstName lastName');
   }
 
   async update(req) {
@@ -21,10 +29,12 @@ class ReviewController extends BaseController {
       throw new ApiError(403, 'You are not allowed to update this review');
     }
 
-    const updatedReview = await this.model.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true
-    }).populate('user', 'firstName lastName');
+    const updatedReview = await this.model
+      .findByIdAndUpdate(id, req.body, {
+        new: true,
+        runValidators: true
+      })
+      .populate('user', 'firstName lastName');
     return updatedReview;
   }
 
