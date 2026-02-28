@@ -12,7 +12,7 @@ class OrderController extends BaseController {
     super(orderModel);
   }
 
-  async placeOrder(userId, shippingAddress, paymentMethod) {
+  async placeOrder(userId, shippingAddress, phone, paymentMethod) {
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -57,6 +57,7 @@ class OrderController extends BaseController {
             items: orderItems,
             totalAmount,
             shippingAddress,
+            phone,
             paymentMethod
           }
         ],
