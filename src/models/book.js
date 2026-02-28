@@ -37,7 +37,7 @@ const schema = new mongoose.Schema(
   {timestamps: true}
 );
 
-schema.index({name: 1});
+schema.index({name: 1, author: 1, category: 1});
 
 schema.pre(/^find/, function () {
   this.populate({path: 'author', select: 'name'}).populate({
